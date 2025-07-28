@@ -525,6 +525,7 @@ public class Scene2 extends JPanel {
                 bombs.addAll(shielded.tryFire());
             }
         }
+        player.updateShootCooldown();
     }
 
     private void doGameCycle() {
@@ -549,7 +550,7 @@ public class Scene2 extends JPanel {
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
-            if (e.getKeyCode() == KeyEvent.VK_SPACE && inGame && shots.size() < 7) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE && inGame && shots.size() < 7 && player.canShoot()) {
                 if (multiShotEnabled) {
                     int spaceLeft = 7 - shots.size();
                     if (spaceLeft >= 2)
@@ -559,6 +560,7 @@ public class Scene2 extends JPanel {
                 } else {
                     shots.add(new Shot(player.getX(), player.getY()));
                 }
+                player.resetShootCooldown();
                 try {
                     new AudioPlayer("src/audio/fire.wav", true).play();
                 } catch (Exception ex) {

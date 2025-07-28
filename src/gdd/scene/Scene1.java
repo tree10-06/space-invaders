@@ -367,6 +367,7 @@ public class Scene1 extends JPanel {
 
         player.updateSpeed(speedFrames > 0);
         player.act();
+        player.updateShootCooldown();
 
         if (speedFrames > 0)
             speedFrames--;
@@ -549,7 +550,7 @@ public class Scene1 extends JPanel {
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
-            if (e.getKeyCode() == KeyEvent.VK_SPACE && inGame && shots.size() < 7) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE && inGame && shots.size() < 7 && player.canShoot()) {
                 if (multiShotEnabled) {
                     // Fire up to 3 shots from slightly offset positions if space permits
                     int spaceLeft = 7 - shots.size();
@@ -561,7 +562,7 @@ public class Scene1 extends JPanel {
                 } else {
                     shots.add(new Shot(player.getX(), player.getY()));
                 }
-
+                player.resetShootCooldown();
                 try {
                     new AudioPlayer("src/audio/fire.wav", true).play();
                 } catch (Exception ex) {

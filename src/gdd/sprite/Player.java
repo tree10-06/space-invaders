@@ -24,6 +24,8 @@ public class Player extends Sprite {
     private int idleFrameCounter = 0;
 
     private int health = 10;
+    private int shootCooldown = 0;
+    private static final int SHOOT_COOLDOWN_FRAMES = 15; // 0.25s at 60fps
 
     public Player() {
         initPlayer();
@@ -143,5 +145,17 @@ public class Player extends Sprite {
 
     public boolean isDead() {
         return health <= 0;
+    }
+
+    public boolean canShoot() {
+        return shootCooldown == 0;
+    }
+
+    public void resetShootCooldown() {
+        shootCooldown = SHOOT_COOLDOWN_FRAMES;
+    }
+
+    public void updateShootCooldown() {
+        if (shootCooldown > 0) shootCooldown--;
     }
 }
