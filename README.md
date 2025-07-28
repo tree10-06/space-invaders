@@ -116,3 +116,8 @@ Now you're ready to develop and run the Space Invaders game!
 
 - Java Runtime Environment (JRE)
 - Java Development Kit (JDK) for compilation# space-invaders
+
+# Team Members:
+Mengtry Heang u6530198
+Humam Khurram u6611680
+Puran Paodensakul u6611140

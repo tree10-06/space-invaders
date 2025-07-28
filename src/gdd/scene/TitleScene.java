@@ -93,6 +93,23 @@ public class TitleScene extends JPanel {
             int x = (d.width - stringWidth) / 2;
             g.drawString(text, x, 650);
         }
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(new Font("Helvetica", Font.PLAIN, 14));
+
+        String[] credits = {
+                "Project by:",
+                "Mengtry Heang",
+                "Humam Khurram",
+                "Puran Paodensakul"
+        };
+
+        int y = 600; // Vertical position
+        for (String name : credits) {
+            int textWidth = g.getFontMetrics().stringWidth(name);
+            int x = (d.width - textWidth) / 2 - 250; // Shift 100px to the left
+            g.drawString(name, x, y);
+            y += 20;
+        }
 
         Toolkit.getDefaultToolkit().sync();
     }
