@@ -55,8 +55,8 @@ public class Player extends Sprite {
 
         if (x <= 2)
             x = 2;
-        if (x >= BOARD_WIDTH - 2 * width)
-            x = BOARD_WIDTH - 2 * width;
+        if (x >= BOARD_WIDTH - 52)  // Using actual player sprite width (52)
+            x = BOARD_WIDTH - 52;
 
         animate();
     }
