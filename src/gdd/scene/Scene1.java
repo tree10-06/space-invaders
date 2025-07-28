@@ -3,6 +3,7 @@ package gdd.scene;
 import static gdd.Global.*;
 import gdd.AudioPlayer;
 import gdd.Game;
+import gdd.Score;
 import gdd.sprite.Enemy;
 import gdd.sprite.Explosion;
 import gdd.sprite.Player;
@@ -41,7 +42,6 @@ public class Scene1 extends JPanel {
     private Player player;
     private int direction = -1;
     private int deaths = 0;
-    private int score = 0;
     final int BLOCKHEIGHT = 50;
     final int BLOCKWIDTH = 50;
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
@@ -131,7 +131,7 @@ public class Scene1 extends JPanel {
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
         player = new Player();
-        score = 0;
+        Score.getInstance().resetScore();
         deaths = 0;
         try {
             audioPlayer = new AudioPlayer("src/audio/scene1.wav");
@@ -273,7 +273,7 @@ public class Scene1 extends JPanel {
         g.setColor(Color.green);
         g.setColor(Color.white);
         g.setFont(new Font("Helvetica", Font.PLAIN, 18));
-        g.drawString("Score: " + score, 10, 50);
+        g.drawString("Score: " + Score.getInstance().getScore(), 10, 50);
         g.drawString("Time: " + (elapsedFrames / 60) + "s", 200, 50); // Show timer in seconds
         int statusX = 350;
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
@@ -412,7 +412,7 @@ public class Scene1 extends JPanel {
                             enemy.setDying(true);
                             explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                             deaths++;
-                            score += 10;
+                            Score.getInstance().addScore(10);
                         }
                         shot.die();
                         shotsToRemove.add(shot);

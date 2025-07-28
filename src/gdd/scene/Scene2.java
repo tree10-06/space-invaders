@@ -2,6 +2,7 @@ package gdd.scene;
 
 import static gdd.Global.*;
 import gdd.AudioPlayer;
+import gdd.Score;
 import gdd.sprite.Enemy;
 import gdd.sprite.Explosion;
 import gdd.sprite.Player;
@@ -41,7 +42,6 @@ public class Scene2 extends JPanel {
     private Player player;
     private int direction = -1;
     private int deaths = 0;
-    private int score = 0;
     final int BLOCKHEIGHT = 50;
     final int BLOCKWIDTH = 50;
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
@@ -133,10 +133,9 @@ public class Scene2 extends JPanel {
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
         player = new Player();
-        score = 0;
         deaths = 0;
         try {
-            audioPlayer = new AudioPlayer("src/audio/scene1.wav"); // Use a different audio for Scene2 if available
+            audioPlayer = new AudioPlayer("src/audio/scene1.wav");
             audioPlayer.play();
         } catch (Exception e) {
             System.err.println("Error loading audio: " + e.getMessage());
@@ -271,7 +270,7 @@ public class Scene2 extends JPanel {
         g.setFont(new Font("Helvetica", Font.BOLD, 16)); // CHANGED
         g.drawString("Galaxy Siege - Sector 2", 10, 20); // CHANGED Title
         g.setFont(new Font("Helvetica", Font.PLAIN, 18));
-        g.drawString("Score: " + score, 10, 50);
+        g.drawString("Score: " + Score.getInstance().getScore(), 10, 50);
         g.drawString("Time: " + (elapsedFrames / 60) + "s", 200, 50);
         g.setColor(Color.PINK);
         g.drawString("Health: " + player.getHealth(), 350, 50);
@@ -385,7 +384,7 @@ public class Scene2 extends JPanel {
                             e.setImage(new ImageIcon(IMG_EXPLOSION).getImage());
                             e.setDying(true);
                             explosions.add(new Explosion(e.getX(), e.getY()));
-                            score += 10;
+                            Score.getInstance().addScore(10);
                             try {
                                 new AudioPlayer("src/audio/explosion.wav", true).play();
                             } catch (Exception ex) {
@@ -412,7 +411,7 @@ public class Scene2 extends JPanel {
                             shielded.hit();
                             if (!shielded.isVisible()) {
                                 explosions.add(new Explosion(shielded.getX(), shielded.getY()));
-                                score += 30; // Bonus for shielded
+                                Score.getInstance().addScore(30); // Bonus for shielded
                             }
                         } else if (enemy instanceof LargeAlien largeAlien) {
                             largeAlien.takeDamage(1);
@@ -430,7 +429,7 @@ public class Scene2 extends JPanel {
                             enemy.setDying(true);
                             explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                             deaths++;
-                            score += 10;
+                            Score.getInstance().addScore(10);
                         }
                         shot.die();
                         shotsToRemove.add(shot);
