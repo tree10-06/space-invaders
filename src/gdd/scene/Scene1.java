@@ -515,7 +515,7 @@ public class Scene1 extends JPanel {
         elapsedFrames++; // Increment timer every frame
 
         // SWITCH TO SCENE2 BASED ON TIME PASSED
-        if (!switchedToScene2 && elapsedFrames / 60 >= 10 && parentFrame instanceof Game) {
+        if (!switchedToScene2 && elapsedFrames / 60 >= 300 && parentFrame instanceof Game) {
             switchedToScene2 = true;
             timer.stop();
             if (audioPlayer != null) {
