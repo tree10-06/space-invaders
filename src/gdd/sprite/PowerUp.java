@@ -21,15 +21,12 @@ public class PowerUp extends Sprite {
         String imgPath = switch (type) {
             case TYPE_SPEED -> "src/images/speedup.png";
             case TYPE_MULTI -> "src/images/multishot.png";
-            case TYPE_BOMB -> "src/images/yellow-bomb.png";
+            case TYPE_BOMB -> "src/images/bomb_upgrade.png";
             default -> "src/images/power_generic.png";
         };
 
         ImageIcon ii = new ImageIcon(imgPath);
-        Image img = ii.getImage().getScaledInstance(
-                ii.getIconWidth() * SCALE_FACTOR,
-                ii.getIconHeight() * SCALE_FACTOR,
-                Image.SCALE_SMOOTH);
+        Image img = ii.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         setImage(img);
     }
 

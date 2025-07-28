@@ -3,6 +3,7 @@ package gdd.sprite;
 
 import javax.swing.ImageIcon;
 import static gdd.Global.*;
+import java.awt.Image;
 
 public class Bomb extends Sprite {
     private boolean destroyed;
@@ -13,7 +14,7 @@ public class Bomb extends Sprite {
         this.y = y;
         var bombImg = "src/images/bomb.png";
         var ii = new ImageIcon(bombImg);
-        setImage(ii.getImage());
+        setImage(ii.getImage().getScaledInstance(4, 10, Image.SCALE_SMOOTH));
     }
 
     public void setDestroyed(boolean destroyed) {

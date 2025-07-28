@@ -66,8 +66,8 @@ public class ShieldedEnemy extends Enemy {
             dx = -2;
         }
 
-        if (y > GROUND - ALIEN_HEIGHT) {
-            y = GROUND - ALIEN_HEIGHT;
-        }
+        // if (y > GROUND - ALIEN_HEIGHT) {
+        // y = GROUND - ALIEN_HEIGHT;
+        // }
     }
-} 
+}

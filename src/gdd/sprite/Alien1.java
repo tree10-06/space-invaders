@@ -24,7 +24,7 @@ public class Alien1 extends Enemy {
         idleFrames = new Image[3];
         for (int i = 0; i < 3; i++) {
             var ii = new ImageIcon("src/images/alien1_idle_" + i + ".png");
-            idleFrames[i] = ii.getImage().getScaledInstance(52, 52, Image.SCALE_SMOOTH);
+            idleFrames[i] = ii.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         }
         setImage(idleFrames[0]);
 
@@ -44,9 +44,9 @@ public class Alien1 extends Enemy {
             dx = -2;
         }
 
-        if (y > GROUND - ALIEN_HEIGHT) {
-            y = GROUND - ALIEN_HEIGHT;
-        }
+        // if (y > GROUND - ALIEN_HEIGHT) {
+        // y = GROUND - ALIEN_HEIGHT;
+        // }
 
         // Animate
         animate();

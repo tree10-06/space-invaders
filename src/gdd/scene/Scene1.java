@@ -41,7 +41,7 @@ public class Scene1 extends JPanel {
     private List<Shot> shots;
     private Player player;
     private int direction = -1;
-    private int deaths = 0;
+    int deaths = 0;
     final int BLOCKHEIGHT = 50;
     final int BLOCKWIDTH = 50;
     final int BLOCKS_TO_DRAW = BOARD_HEIGHT / BLOCKHEIGHT;
@@ -70,7 +70,7 @@ public class Scene1 extends JPanel {
     public Scene1(javax.swing.JFrame parentFrame) {
         this.parentFrame = parentFrame;
         MAP = loadMap("src/map/map_expanded.csv");
-        loadSpawnMap("src/map/spawn_new.csv");
+        loadSpawnMap("src/map/spawn_scene1.csv");
         initBoard();
         lastEnemyWaveFrame = getLastEnemyWaveFrame();
     }
@@ -279,12 +279,12 @@ public class Scene1 extends JPanel {
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
         if (multiShotEnabled) {
             g.setColor(Color.cyan);
-            g.drawString("MULTI SHOT", statusX, 50);
+            g.drawString("MULTI SHOT", statusX, d.height - 60);
             statusX += 100;
         }
         if (speedFrames > 0) {
             g.setColor(Color.orange);
-            g.drawString("SPEED BOOST", statusX, 50);
+            g.drawString("SPEED BOOST", statusX, d.height - 60);
         }
         if (boss != null && boss.isVisible()) {
             g.setColor(Color.RED);
@@ -337,8 +337,6 @@ public class Scene1 extends JPanel {
                     case "alien1" -> enemies.add(new Alien1(sd.x, sd.y));
                     case "largealien" -> {
                     } // Boss will be spawned after all enemies are dead
-                    case "speed" -> powerUps.add(new PowerUp(PowerUp.TYPE_SPEED, sd.x, sd.y));
-                    case "multi" -> powerUps.add(new PowerUp(PowerUp.TYPE_MULTI, sd.x, sd.y));
                     default -> System.out.println("Unknown spawn type: " + type); // Debug
                 }
             }
@@ -413,7 +411,16 @@ public class Scene1 extends JPanel {
                             explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                             deaths++;
                             Score.getInstance().addScore(10);
+                            if (randomizer.nextInt(100) < 15) {
+                                String[] types = {
+                                        PowerUp.TYPE_MULTI,
+                                        PowerUp.TYPE_SPEED,
+                                };
+                                String chosen = types[randomizer.nextInt(types.length)];
+                                powerUps.add(new PowerUp(chosen, enemy.getX(), enemy.getY()));
+                            }
                         }
+
                         shot.die();
                         shotsToRemove.add(shot);
                         try {
@@ -445,18 +452,19 @@ public class Scene1 extends JPanel {
             }
         }
 
+        List<Enemy> enemiesToRemove = new ArrayList<>();
+
         enemies.stream().filter(Enemy::isVisible).forEach(enemy -> {
-            if (enemy.getY() > GROUND - ALIEN_HEIGHT) {
-                inGame = false;
-                message = "Invasion!";
-                if (audioPlayer != null)
-                    try {
-                        audioPlayer.stop();
-                    } catch (Exception ignored) {
-                    }
-            }
             enemy.act();
+
+            if (enemy.getY() > GROUND) {
+                enemy.setDying(true);
+                enemy.die();
+                enemiesToRemove.add(enemy);
+            }
         });
+
+        enemies.removeAll(enemiesToRemove);
 
         // Randomly drop bombs from visible enemies
         for (Enemy enemy : enemies) {
@@ -516,7 +524,7 @@ public class Scene1 extends JPanel {
         elapsedFrames++; // Increment timer every frame
 
         // SWITCH TO SCENE2 BASED ON TIME PASSED
-        if (!switchedToScene2 && elapsedFrames / 60 >= 300 && parentFrame instanceof Game) {
+        if (!switchedToScene2 && elapsedFrames / 60 >= 320 && parentFrame instanceof Game) {
             switchedToScene2 = true;
             timer.stop();
             if (audioPlayer != null) {

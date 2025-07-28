@@ -25,7 +25,7 @@ public class Player extends Sprite {
 
     private int health = 10;
     private int shootCooldown = 0;
-    private static final int SHOOT_COOLDOWN_FRAMES = 15; // 0.25s at 60fps
+    private static final int SHOOT_COOLDOWN_FRAMES = 10; // 0.25s at 60fps
 
     public Player() {
         initPlayer();
@@ -55,7 +55,7 @@ public class Player extends Sprite {
 
         if (x <= 2)
             x = 2;
-        if (x >= BOARD_WIDTH - 52)  // Using actual player sprite width (52)
+        if (x >= BOARD_WIDTH - 52) // Using actual player sprite width (52)
             x = BOARD_WIDTH - 52;
 
         animate();
@@ -115,9 +115,9 @@ public class Player extends Sprite {
         if (leftPressed && rightPressed) {
             dx = 0;
         } else if (leftPressed) {
-            dx = -4;
+            dx = -6;
         } else if (rightPressed) {
-            dx = 4;
+            dx = 6;
         } else {
             dx = 0;
         }
@@ -125,9 +125,9 @@ public class Player extends Sprite {
 
     public void updateSpeed(boolean boosted) {
         if (dx > 0) {
-            dx = boosted ? 10 : 4;
+            dx = boosted ? 12 : 6;
         } else if (dx < 0) {
-            dx = boosted ? -10 : -4;
+            dx = boosted ? -12 : -6;
         }
     }
 
@@ -140,7 +140,8 @@ public class Player extends Sprite {
     }
 
     public void takeHit() {
-        if (health > 0) health--;
+        if (health > 0)
+            health--;
     }
 
     public boolean isDead() {
@@ -156,6 +157,7 @@ public class Player extends Sprite {
     }
 
     public void updateShootCooldown() {
-        if (shootCooldown > 0) shootCooldown--;
+        if (shootCooldown > 0)
+            shootCooldown--;
     }
 }

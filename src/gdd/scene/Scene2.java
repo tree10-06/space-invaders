@@ -74,10 +74,11 @@ public class Scene2 extends JPanel {
     public Scene2(javax.swing.JFrame parentFrame) {
         this.parentFrame = parentFrame;
         MAP = loadMap("src/map/map_expanded.csv"); // Use a different map for Scene2 if available
-        loadSpawnMap("src/map/spawn.csv"); // Use a different spawn file for Scene2 if available
+        loadSpawnMap("src/map/spawn_scene2.csv"); // Use a different spawn file for Scene2 if available
         initBoard();
         lastEnemyWaveFrame = getLastEnemyWaveFrame();
     }
+
     // Keep the old constructor for compatibility
     public Scene2() {
         this(null);
@@ -135,7 +136,7 @@ public class Scene2 extends JPanel {
         player = new Player();
         deaths = 0;
         try {
-            audioPlayer = new AudioPlayer("src/audio/scene1.wav");
+            audioPlayer = new AudioPlayer("src/audio/scene2.wav");
             audioPlayer.play();
         } catch (Exception e) {
             System.err.println("Error loading audio: " + e.getMessage());
@@ -278,13 +279,13 @@ public class Scene2 extends JPanel {
         int statusX = 350;
         g.setFont(new Font("Helvetica", Font.PLAIN, 14));
         if (multiShotEnabled) {
-            g.setColor(Color.CYAN);
-            g.drawString("MULTI SHOT", statusX, 50);
+            g.setColor(Color.cyan);
+            g.drawString("MULTI SHOT", statusX, d.height - 60);
             statusX += 100;
         }
         if (speedFrames > 0) {
-            g.setColor(Color.ORANGE);
-            g.drawString("SPEED BOOST", statusX, 50);
+            g.setColor(Color.orange);
+            g.drawString("SPEED BOOST", statusX, d.height - 60);
         }
 
         // Boss Health Bar
@@ -312,7 +313,8 @@ public class Scene2 extends JPanel {
                 g.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), this);
             }
         } else {
-            if (timer.isRunning()) timer.stop();
+            if (timer.isRunning())
+                timer.stop();
             gameOver(g);
         }
 
@@ -341,17 +343,19 @@ public class Scene2 extends JPanel {
             for (SpawnDetails sd : spawns) {
                 String type = sd.type.trim().toLowerCase();
                 switch (type) {
-                    case "alien1": enemies.add(new Alien1(sd.x, sd.y)); break;
-                    case "shielded": enemies.add(new ShieldedEnemy(sd.x, sd.y)); break;
+                    case "alien1":
+                        enemies.add(new Alien1(sd.x, sd.y));
+                        break;
+                    case "shielded":
+                        enemies.add(new ShieldedEnemy(sd.x, sd.y));
+                        break;
                     case "largealien":
                         LargeAlien newBoss = new LargeAlien(sd.x, sd.y);
                         enemies.add(newBoss);
                         bosses.add(newBoss);
                         break;
-                    case "speed": powerUps.add(new PowerUp(PowerUp.TYPE_SPEED, sd.x, sd.y)); break;
-                    case "multi": powerUps.add(new PowerUp(PowerUp.TYPE_MULTI, sd.x, sd.y)); break;
-                    case "bomb": powerUps.add(new PowerUp(PowerUp.TYPE_BOMB, sd.x, sd.y)); break;
-                    default: System.out.println("Unknown spawn type: " + type); // Debug
+                    default:
+                        System.out.println("Unknown spawn type: " + type); // Debug
                 }
             }
         }
@@ -405,8 +409,8 @@ public class Scene2 extends JPanel {
                     int enemyW = (enemy instanceof LargeAlien) ? enemy.getImageWidth() : ALIEN_WIDTH;
                     int enemyH = (enemy instanceof LargeAlien) ? enemy.getImageHeight() : ALIEN_HEIGHT;
                     if (enemy.isVisible() &&
-                        shotX >= enemy.getX() && shotX <= enemy.getX() + enemyW &&
-                        shotY >= enemy.getY() && shotY <= enemy.getY() + enemyH) {
+                            shotX >= enemy.getX() && shotX <= enemy.getX() + enemyW &&
+                            shotY >= enemy.getY() && shotY <= enemy.getY() + enemyH) {
                         if (enemy instanceof ShieldedEnemy shielded) {
                             shielded.hit();
                             if (!shielded.isVisible()) {
@@ -430,6 +434,16 @@ public class Scene2 extends JPanel {
                             explosions.add(new Explosion(enemy.getX(), enemy.getY()));
                             deaths++;
                             Score.getInstance().addScore(10);
+
+                            if (randomizer.nextInt(100) < 15) {
+                                String[] types = {
+                                        PowerUp.TYPE_MULTI,
+                                        PowerUp.TYPE_SPEED,
+                                        PowerUp.TYPE_BOMB
+                                };
+                                String chosen = types[randomizer.nextInt(types.length)];
+                                powerUps.add(new PowerUp(chosen, enemy.getX(), enemy.getY()));
+                            }
                         }
                         shot.die();
                         shotsToRemove.add(shot);
@@ -460,17 +474,17 @@ public class Scene2 extends JPanel {
                 enemies.forEach(e -> e.setY(e.getY() + GO_DOWN));
             }
         }
+
+        List<Enemy> enemiesToRemove = new ArrayList<>();
+
         enemies.stream().filter(Enemy::isVisible).forEach(enemy -> {
-            if (enemy.getY() >= GROUND - ALIEN_HEIGHT) {
-                inGame = false;
-                message = "Invasion!";
-                if (audioPlayer != null)
-                    try {
-                        audioPlayer.stop();
-                    } catch (Exception ignored) {
-                    }
-            }
             enemy.act();
+
+            if (enemy.getY() > GROUND) {
+                enemy.setDying(true);
+                enemy.die();
+                enemiesToRemove.add(enemy);
+            }
         });
         for (Enemy enemy : enemies) {
             if (randomizer.nextInt(240) == CHANCE && enemy.isVisible()) {
@@ -546,6 +560,7 @@ public class Scene2 extends JPanel {
         public void keyReleased(KeyEvent e) {
             player.keyReleased(e);
         }
+
         @Override
         public void keyPressed(KeyEvent e) {
             player.keyPressed(e);
